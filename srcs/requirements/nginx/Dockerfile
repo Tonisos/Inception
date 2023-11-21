@@ -27,4 +27,4 @@ RUN mkdir -p /var/run/nginx
 # RUN chown -R www-data:www-data /var/www/html
 
 # CMD to start Nginx in the foreground
-CMD ["nginx", "-g", "daemon off;"]
+# CMD ["nginx", "-g", "daemon off;"]
