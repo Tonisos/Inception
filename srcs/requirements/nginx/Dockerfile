@@ -21,10 +21,10 @@ RUN mkdir -p /var/run/nginx
 
 
 #the only port allowed
-# EXPOSE	443
+EXPOSE	443
 
 # RUN chmod 755 /var/www/html
 # RUN chown -R www-data:www-data /var/www/html
 
 # CMD to start Nginx in the foreground
-# CMD ["nginx", "-g", "daemon off;"]
+CMD ["nginx", "-g", "daemon off;"]
