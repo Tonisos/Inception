@@ -1,53 +1,60 @@
 version: '3'
 
 networks:
-	network:
-	driver: bridge
+  inception_net:
+    driver: bridge
 
 volumes:
-	wordpress:
-		driver: local # ici nous stockons le volume en local
-		driver_opts:
-		type: 'none' 									# aucun type spécifique
-		o: 'bind
-		device: '/Users/login/data/wordpress' 		#Ou stocker le dossier sur votre ordinateur en local
-	mariadb:
-		driver: local
-		driver_opts:
-		type: 'none' 
-		o: 'bind'										 # Les Bind Mounts sont des volumes qui se montent sur un chemin d'accès à l'hôte, et ils peuvent être modifiés par d'autres processus en dehors de docker.
-		device: '/Users/login/data/mariadb'			#Ou stocker le dossier sur votre ordinateur en local
+  db:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: '/Users/login/data/mariadb'
+  wordpress:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: '/Users/login/data/wordpress'
 
-
-services:       # précise les différents services (images) à utiliser 
+services:
   mariadb:
     container_name: mariadb
     build: ./requirements/mariadb
-    networks: inception_net
-    env_file : .env
-    volumes : db:/var/lib/mysql
-    restart: unless-stopped         # redémarre tant qu'il n'est pas stoppé 
-    expose : "3306"
+    networks: 
+      - inception_net
+    env_file: .env
+    volumes:
+      - db:/var/lib/mysql
+    restart: unless-stopped
+    expose:
+      - "3306"
 
   nginx:
     container_name: nginx
     build: ./requirements/nginx
-    networks: inception_net
-    depends_on: wordpress
-    env_file : .env
-    volumes : wordpress:/var/www/wordpress
-    restart: on-failure 	        # redémarre tant qu'il n'est pas stoppé 
-    ports: "443:443"
-								
-
-
+    networks:
+      - inception_net
+    depends_on: 
+      - wordpress
+    env_file: .env
+    volumes:
+      - wordpress:/var/www/wordpress
+    restart: on-failure
+    ports:
+      - "443:443"
 
   wordpress:
     container_name: wordpress
-    env_file : .env
+    env_file: .env
     build: ./requirements/wordpress
-    networks: inception_net
-    depends_on: mariadb
-    volumes : db:/var/lib/mysql
-    restart: unless-stopped         # redémarre tant qu'il n'est pas stoppé 
-    expose : "9000"
+    networks:
+      - inception_net
+    depends_on:
+      - mariadb
+    volumes:
+      - db:/var/lib/mysql
+    restart: unless-stopped
+    expose:
+      - "9000"
