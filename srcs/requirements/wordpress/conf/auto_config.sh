@@ -15,6 +15,8 @@ else
   echo "WordPress: wp-config.php already exists."
 fi
 
+
+
 wp config create	--allow-root \
 	--dbname=$SQL_DATABASE \
 	--dbuser=$SQL_USER \
