@@ -30,7 +30,7 @@ services:
     restart: unless-stopped
     expose:
       - "3306"
-      
+
   wordpress:
     container_name: wordpress
     env_file: .env
@@ -40,7 +40,7 @@ services:
     depends_on:
       - mariadb
     volumes:
-      - db:/var/lib/mysql
+      - db:/var/www/wordpress
     restart: unless-stopped
     expose:
       - "9000"
