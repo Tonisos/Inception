@@ -1,22 +1,26 @@
 version: '3'
 
 networks:
-  inception_net:
+  inception:
+    name: inception
     driver: bridge
 
 volumes:
   db:
     driver: local
+    name: db
     driver_opts:
       type: 'none'
       o: 'bind'
-      device: '${HOME}/data/wordpress'
+      device: '${HOME}/data/mariadb'
+
   wordpress:
     driver: local
+    name: wordpress
     driver_opts:
       type: 'none'
       o: 'bind'
-      device: ${HOME}/data/mariadb
+      device: ${HOME}/data/wordpress
 
 services:
   mariadb:
