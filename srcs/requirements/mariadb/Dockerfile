@@ -16,4 +16,4 @@ COPY ./tools/launch-mariadb.sh .
 RUN chmod +x launch-mariadb.sh
 
 # Run the script
-ENTRYPOINT ["./launch-mariadb.sh"]
+ENTRYPOINT ["./launch-mariadb.sh"]boss
