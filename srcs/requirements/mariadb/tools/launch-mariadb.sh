@@ -33,7 +33,6 @@ mysql -e "FLUSH PRIVILEGES;"
 
 fi
 
-
 mysqladmin -u root -p$SQL_ROOT_PASSWORD shutdown
 
 exec mysqld_safe

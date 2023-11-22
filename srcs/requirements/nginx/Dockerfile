@@ -1,4 +1,4 @@
-FROM debian:buster
+FROM debian:11
 
 # Update package list and upgrade installed packages
 RUN apt-get update && apt-get upgrade -y

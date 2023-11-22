@@ -1,4 +1,4 @@
-FROM debian:buster
+FROM debian:11
 
 # Update package list and upgrade installed packages
 RUN apt-get update && apt-get upgrade -y
@@ -14,6 +14,9 @@ COPY /conf/50-server.cnf /etc/mysql/mariadb.conf.d/50-server.cnf
 COPY ./tools/launch-mariadb.sh .
 # Make the script executable
 RUN chmod +x launch-mariadb.sh
+
+# Open port
+EXPOSE		3306
 
 # Run the script
 ENTRYPOINT ["./launch-mariadb.sh"]boss
