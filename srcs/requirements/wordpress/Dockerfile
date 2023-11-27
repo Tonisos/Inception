@@ -1,33 +1,36 @@
 FROM debian:11
 
+# Update package list and upgrade installed packages
 RUN apt-get update && apt-get upgrade -y
 
+# Install essential tools
 RUN apt-get install -y wget vim
 
-RUN apt-get install -y php7.3\
-						php-fpm\
-						php-mysql\
-						mariadb-client
+# Install PHP and MariaDB client
+RUN apt-get install -y php7.3 php-fpm php-mysql mariadb-client
 
-RUN wget https://fr.wordpress.org/wordpress-6.0-fr_FR.tar.gz -P /var/www
+# Download and extract WordPress
+WORKDIR /var/www
+RUN wget https://fr.wordpress.org/wordpress-6.0-fr_FR.tar.gz && \
+    tar -xvf wordpress-6.0-fr_FR.tar.gz && \
+    rm wordpress-6.0-fr_FR.tar.gz
 
-# Decompress the WordPress tar file
-RUN tar -xvf /var/www/wordpress-6.0-fr_FR.tar.gz -C /var/www/
+# Set ownership of WordPress files
+RUN chown -R root:root /var/www/wordpress
 
-# Remove the tar file (optional, to reduce image size)
-RUN rm /var/www/wordpress-6.0-fr_FR.tar.gz
+# Copy PHP-FPM configuration
+COPY conf/www.conf /etc/php/7.3/fpm/php-fpm.conf
 
-RUN	chown -R root:root /var/www/wordpress
+# Copy the auto configuration script
+COPY conf/auto_config.sh /var/www/
 
-COPY /conf/www.conf /etc/php/7.3/fpm/php-fpm.conf
-COPY /conf/auto_config.sh /var/www/
+# Download and install WP-CLI
+RUN wget https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
+    chmod +x wp-cli.phar && \
+    mv wp-cli.phar /usr/local/bin/wp
 
-RUN wget https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
-
+# Make the auto configuration script executable
 RUN chmod +x /var/www/auto_config.sh
 
-
-RUN chmod +x wp-cli.phar
-RUN mv wp-cli.phar /usr/local/bin/wp
-
+# Set the entrypoint to the auto configuration script
 ENTRYPOINT [ "/var/www/auto_config.sh" ]
