@@ -9,11 +9,7 @@ RUN apt-get install -y nginx openssl
 EXPOSE 443
 
 
-# Generate a self-signed certificate
-RUN openssl req -x509 -nodes \
-    -out /etc/nginx/ssl/inception.crt \
-    -keyout /etc/nginx/ssl/inception.key \
-    -subj "/C=FR/ST=IDF/L=Lyon/O=42/OU=42/CN=amontalbU/ID=amontalb"
+
 
 # Copy Nginx configuration
 COPY conf/nginx.conf /etc/nginx/nginx.conf
@@ -23,15 +19,15 @@ RUN chmod 755 /var/www/html \
     && chown -R www-data:www-data /var/www/html
 
 
-# # Copy entry point script
-# COPY nginx_start.sh /var/www/
+# Copy entry point script
+COPY nginx-start.sh /var/www/
 
-# # Set execute permissions for the entry point script
-# RUN chmod +x /var/www/nginx_start.sh
+# Set execute permissions for the entry point script
+RUN chmod +x /var/www/nginx-start.sh
 
 # Expose the only allowed port
 
-# Use ENTRYPOINT to start Nginx using the custom script
-# ENTRYPOINT ["/var/www/nginx_start.sh"]
+Use ENTRYPOINT to start Nginx using the custom script
+ENTRYPOINT ["/var/www/nginx-start.sh"]
 
 CMD ["nginx", "-g", "daemon off;"]
