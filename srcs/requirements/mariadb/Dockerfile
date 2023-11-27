@@ -4,7 +4,7 @@ FROM debian:11
 RUN apt-get update && apt-get upgrade -y
 
 # Install MariaDB server and Vim
-RUN apt-get install -y mariadb-server vim
+RUN apt-get install -y mariadb-server 
 
 # Copy MariaDB configuration
 COPY /conf/50-server.cnf /etc/mysql/mariadb.conf.d/50-server.cnf
@@ -20,3 +20,5 @@ EXPOSE		3306
 
 # Run the script
 ENTRYPOINT ["./launch-mariadb.sh"]boss
+
+exec "$@"
