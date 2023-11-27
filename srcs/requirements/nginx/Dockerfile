@@ -6,6 +6,7 @@ RUN apt-get update && apt-get upgrade -y
 # Install necessary packages
 RUN apt-get install -y nginx openssl
 
+# Expose the only allowed port
 EXPOSE 443
 
 
@@ -25,9 +26,8 @@ COPY nginx-start.sh /var/www/
 # Set execute permissions for the entry point script
 RUN chmod +x /var/www/nginx-start.sh
 
-# Expose the only allowed port
 
-Use ENTRYPOINT to start Nginx using the custom script
+#Use ENTRYPOINT to start Nginx using the custom script
 ENTRYPOINT ["/var/www/nginx-start.sh"]
 
 CMD ["nginx", "-g", "daemon off;"]
