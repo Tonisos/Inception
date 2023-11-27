@@ -10,8 +10,6 @@ RUN apt-get install -y nginx openssl
 EXPOSE 443
 
 
-
-
 # Copy Nginx configuration
 COPY conf/nginx.conf /etc/nginx/nginx.conf
 
@@ -21,7 +19,7 @@ RUN chmod 755 /var/www/html \
 
 
 # Copy entry point script
-COPY nginx-start.sh /var/www/
+COPY tools/nginx-start.sh /var/www/
 
 # Set execute permissions for the entry point script
 RUN chmod +x /var/www/nginx-start.sh
