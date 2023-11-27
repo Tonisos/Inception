@@ -21,4 +21,3 @@ EXPOSE		3306
 # Run the script
 ENTRYPOINT ["./launch-mariadb.sh"]boss
 
-exec "$@"
