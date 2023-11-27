@@ -4,7 +4,7 @@ FROM debian:11
 RUN apt-get update && apt-get upgrade -y
 
 # Install necessary packages
-RUN apt-get install -y nginx openssl
+RUN apt-get install nginx openssl -y
 
 # Expose the only allowed port
 EXPOSE 443
@@ -13,13 +13,9 @@ EXPOSE 443
 # Copy Nginx configuration
 COPY conf/nginx.conf /etc/nginx/nginx.conf
 
-# Set permissions for /var/www/html
-RUN chmod 755 /var/www/html \
-    && chown -R www-data:www-data /var/www/html
-
-
 # Copy entry point script
 COPY tools/nginx-start.sh /var/www/
+
 
 # Set execute permissions for the entry point script
 RUN chmod +x /var/www/nginx-start.sh
