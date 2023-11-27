@@ -25,11 +25,11 @@ RUN chmod 755 /var/www/html \
 # Create directory for Nginx PID file
 RUN mkdir -p /var/run/nginx
 
-# Copy entry point script
-COPY nginx_start.sh /var/www/
+# # Copy entry point script
+# COPY nginx_start.sh /var/www/
 
-# Set execute permissions for the entry point script
-RUN chmod +x /var/www/nginx_start.sh
+# # Set execute permissions for the entry point script
+# RUN chmod +x /var/www/nginx_start.sh
 
 # Expose the only allowed port
 EXPOSE 443
