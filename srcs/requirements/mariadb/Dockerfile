@@ -4,7 +4,7 @@ FROM debian:11
 RUN apt-get update && apt-get upgrade -y
 
 # Install MariaDB server
-RUN apt-get install -y mariadb-server 
+RUN apt-get install mariadb-server -y 
 
 
 # Copy the script into the container
