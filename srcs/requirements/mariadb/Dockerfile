@@ -3,11 +3,8 @@ FROM debian:11
 # Update package list and upgrade installed packages
 RUN apt-get update && apt-get upgrade -y
 
-# Install MariaDB server and Vim
+# Install MariaDB server
 RUN apt-get install -y mariadb-server 
-
-# Copy MariaDB configuration
-COPY /conf/50-server.cnf /etc/mysql/mariadb.conf.d/50-server.cnf
 
 
 # Copy the script into the container
@@ -19,5 +16,8 @@ RUN chmod +x launch-mariadb.sh
 EXPOSE		3306
 
 # Run the script
-ENTRYPOINT ["./launch-mariadb.sh"]boss
+ENTRYPOINT ["./launch-mariadb.sh"]
+CMD		["mysqld", "--bind-address=0.0.0.0"]
+
+
 
