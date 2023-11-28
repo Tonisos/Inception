@@ -6,6 +6,14 @@ networks:
     driver: bridge
 
 volumes:
+  wordpress:
+    driver: local
+    name: wordpress
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: ${HOME}/data/wordpress
+
   db:
     driver: local
     name: db
@@ -14,13 +22,6 @@ volumes:
       o: 'bind'
       device: '${HOME}/data/mariadb'
 
-  wordpress:
-    driver: local
-    name: wordpress
-    driver_opts:
-      type: 'none'
-      o: 'bind'
-      device: ${HOME}/data/wordpress
 
 services:
   mariadb:
@@ -37,14 +38,15 @@ services:
 
   wordpress:
     container_name: wordpress
-    env_file: .env
+    env_file: 
+      - .env
     build: ./requirements/wordpress
     networks:
       - inception_net
     depends_on:
       - mariadb
     volumes:
-      - db:/var/www/wordpress
+      - wordpress:/var/www/html
     restart: unless-stopped
     expose:
       - "9000"
@@ -56,10 +58,9 @@ services:
       - inception_net
     depends_on: 
       - wordpress
-    env_file: .env
     volumes:
-      - wordpress:/var/www/wordpress
-    restart: on-failure
+      - wordpress:/var/www/html
+    restart: always
     ports:
-      - "8443:443"
+      - "443:443"
 
