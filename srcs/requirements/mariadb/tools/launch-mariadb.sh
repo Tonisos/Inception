@@ -3,7 +3,7 @@
 # Terminate the script if an error occured
 set -e
 
-service mysql start;
+service mysql start
 
 # Safe install of MySQL
 if [ ! -d "/var/lib/mysql/$WP_TITLE" ]
