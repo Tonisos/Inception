@@ -4,10 +4,13 @@ FROM debian:11
 RUN apt-get update && apt-get upgrade -y
 
 # Install essential tools
-RUN apt-get install -y wget vim
+RUN apt-get install -y wget curl
 
 # Install PHP and MariaDB client
 RUN apt-get install -y php7.3 php-fpm php-mysql mariadb-client
+
+
+EXPOSE 9000
 
 # Download and extract WordPress
 WORKDIR /var/www
