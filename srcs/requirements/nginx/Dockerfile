@@ -11,10 +11,10 @@ EXPOSE 443
 
 
 # Copy Nginx configuration
-COPY .conf/nginx.conf /etc/nginx/sites-enabled/default
+COPY ./conf/nginx.conf /etc/nginx/sites-enabled/default
 
 # Copy entry point script
-COPY .tools/nginx-start.sh /var/www/
+COPY ./tools/nginx-start.sh /var/www/
 
 
 # Set execute permissions for the entry point script
