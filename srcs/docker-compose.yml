@@ -2,65 +2,59 @@ version: '3'
 
 networks:
   inception_net:
-    name: inception
+    name: inception_net
     driver: bridge
 
 volumes:
-  wordpress:
+  wp:
     driver: local
-    name: wordpress
+    name: wp
     driver_opts:
-      type: 'none'
-      o: 'bind'
+      type: none
+      o: bind
       device: ${HOME}/data/wordpress
-
   db:
     driver: local
     name: db
     driver_opts:
-      type: 'none'
-      o: 'bind'
-      device: '${HOME}/data/mariadb'
-
+      type: none
+      o: bind
+      device: ${HOME}/data/mariadb
 
 services:
   mariadb:
     container_name: mariadb
     build: ./requirements/mariadb
-    networks: 
-      - inception_net
-    env_file: .env
+    env_file:
+      - .env
     volumes:
       - db:/var/lib/mysql
-    restart: unless-stopped
-    expose:
-      - "3306"
+    networks:
+      - inception_net
+    restart: always
 
   wordpress:
     container_name: wordpress
-    env_file: 
-      - .env
     build: ./requirements/wordpress
-    networks:
-      - inception_net
+    env_file:
+      - .env
     depends_on:
       - mariadb
     volumes:
-      - wordpress:/var/www/html
-    restart: unless-stopped
-    expose:
-      - "9000"
+      - wp:/var/www/html
+    networks:
+      - inception_net
+    restart: always
 
   nginx:
     container_name: nginx
     build: ./requirements/nginx
-    networks:
-      - inception_net
-    depends_on: 
-      - wordpress
-    volumes:
-      - wordpress:/var/www/html
-    restart: always
     ports:
       - "443:443"
-
+    depends_on:
+      - wordpress
+    volumes:
+      - wp:/var/www/html
+    networks:
+      - inception_net
+    restart: always
