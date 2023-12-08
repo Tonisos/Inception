@@ -1,27 +1,14 @@
-FROM debian:11
+FROM debian:buster
 
-# Update package list and upgrade installed packages
-RUN apt-get update && apt-get upgrade -y
+RUN apt-get update && apt-get install -y nginx openssl
 
-# Install necessary packages
-RUN apt-get install nginx openssl -y
-
-# Expose the only allowed port
 EXPOSE 443
 
+COPY ./conf/default /etc/nginx/sites-enabled/default
 
-# Copy Nginx configuration
-COPY ./conf/nginx.conf /etc/nginx/sites-enabled/default
+COPY ./tools/nginx_start.sh /var/www
+RUN chmod +x /var/www/nginx_start.sh
 
-# Copy entry point script
-COPY ./tools/nginx-start.sh /var/www/
-
-
-# Set execute permissions for the entry point script
-RUN chmod +x /var/www/nginx-start.sh
-
-
-#Use ENTRYPOINT to start Nginx using the custom script
-ENTRYPOINT ["/var/www/nginx-start.sh"]
+ENTRYPOINT [ "/var/www/nginx_start.sh" ]
 
 CMD ["nginx", "-g", "daemon off;"]

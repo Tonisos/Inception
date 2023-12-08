@@ -1,23 +1,12 @@
-FROM debian:11
+FROM debian:buster
 
-# Update package list and upgrade installed packages
-RUN apt-get update && apt-get upgrade -y
+COPY ./tools/launch_mdb.sh .
 
-# Install MariaDB server
-RUN apt-get install mariadb-server -y 
+RUN apt-get update 
+RUN apt-get install -y mariadb-server 
+RUN chmod +x launch_mdb.sh
 
+EXPOSE 3306
 
-# Copy the script into the container
-COPY ./tools/launch-mariadb.sh .
-# Make the script executable
-RUN chmod +x launch-mariadb.sh
-
-# Open port
-EXPOSE		3306
-
-# Run the script
-ENTRYPOINT ["./launch-mariadb.sh"]
-CMD		["mysqld", "--bind-address=0.0.0.0"]
-
-
-
+ENTRYPOINT ["./launch_mdb.sh"]
+CMD ["mysqld", "--bind-address=0.0.0.0"]

@@ -1,0 +1,51 @@
+# Nginx server block configuration for amontalb.42.fr on port 443 with SSL/TLS
+
+server {
+    # Listen on port 443 with SSL/TLS
+    listen 443 ssl;
+    listen [::]:443 ssl;
+
+    # Define the server name
+    server_name amontalb.42.fr;
+
+    # SSL configuration
+    ssl on;
+    ssl_protocols TLSv1.3;
+    ssl_certificate /etc/ssl/certs/nginx.crt;
+    ssl_certificate_key /etc/ssl/private/nginx.key;
+
+    # Root directory for the server
+    root /var/www/html;
+
+    # Configuration for the root location
+    location / {
+        # Try serving files, then directories, and return a 404 if not found
+        try_files $uri $uri/ =404;
+
+        # Define the index files
+        index index.php index.html;
+
+        # Enable directory listing
+        autoindex on;
+    }
+
+    # Configuration for PHP files
+    location ~ \.php$ {
+        # Try serving PHP files, return a 404 if not found
+        try_files $uri $uri/ =404;
+
+        # Include fastcgi_params for FastCGI configuration
+        include fastcgi_params;
+
+        # Pass PHP requests to the FastCGI server listening on wordpress:9000
+        fastcgi_pass wordpress:9000;
+
+        # Specify the index file for FastCGI
+        fastcgi_index index.php;
+
+        # Set the script filename and name parameters
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        fastcgi_param SCRIPT_NAME $fastcgi_script_name;
+        fastcgi_param PATH_INFO $fastcgi_path_info;
+    }
+}
