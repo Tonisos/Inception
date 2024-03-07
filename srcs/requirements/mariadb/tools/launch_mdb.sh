@@ -1,42 +1,42 @@
 #!/bin/bash
 
-# Exit immediately if a command exits with a non-zero status
-set -e
-
-# Start the MySQL service
+# Start MySQL service
 service mysql start
 
-# Check if the WordPress database directory exists
-if [ ! -d "/var/lib/mysql/$WP_TITLE" ]; then
+# Exit script immediately if a command fails
+set -e
+
+# Check if WordPress database directory exists
+if [ ! -d "/var/lib/mysql/$WP_DATABASE_NAME" ]; then
 
   # Configure MySQL for WordPress
-  mysql_secure_installation << EOF
+  mysql_secure_installation << END
 n
 y
 y
 y
 y
-EOF
+END
 
-  # Create the WordPress database
-  mysql -uroot -e "CREATE DATABASE IF NOT EXISTS $WP_TITLE;"
+  # Set MySQL root user password
+  mysql -uroot -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '$MYSQL_ROOT_PWD';"
 
-  # Create the WordPress user
-  mysql -uroot -e "CREATE USER IF NOT EXISTS '$WP_USER_LOGIN'@'%' IDENTIFIED BY '$WP_USER_PASSWORD';"
+  # Create WordPress database
+  mysql -uroot -e "CREATE DATABASE IF NOT EXISTS $WP_DATABASE_NAME;"
 
-  # Grant privileges to the WordPress user
-  mysql -uroot -e "GRANT ALL PRIVILEGES ON $WP_TITLE.* TO '$WP_USER_LOGIN'@'%';"
+  # Create WordPress database user
+  mysql -uroot -e "CREATE USER IF NOT EXISTS '$WP_DB_USER'@'%' IDENTIFIED BY '$WP_DB_PASSWORD';"
+
+  # Grant privileges to WordPress user
+  mysql -uroot -e "GRANT ALL PRIVILEGES ON $WP_DATABASE_NAME.* TO '$WP_DB_USER'@'%';"
 
   # Flush privileges to apply changes
   mysql -uroot -e "FLUSH PRIVILEGES;"
 
-  # Set a password for the MySQL root user
-  mysql -uroot -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '$MYSQL_ROOT_PASSWORD';"
-
 fi
 
-# Shut down the MySQL service
-mysqladmin -u root -p$MYSQL_ROOT_PASSWORD shutdown
+# Shutdown MySQL service
+mysqladmin -u root -p$MYSQL_ROOT_PWD shutdown
 
-# Execute the provided command
+# Execute provided command
 exec "$@"

@@ -1,66 +1,58 @@
-version: '3'
+version: '3.7'
 
-# Define a custom bridge network named "inception_net"
+# Define a custom bridge network for WordPress containers
 networks:
-  inception_net:
-    name: inception_net
+  wp_network:
     driver: bridge
 
-# Define named volumes for WordPress and MariaDB data
+# Define named volumes for WordPress and MariaDB data persistence
 volumes:
-  wp:
+  wordpress_data:
     driver: local
-    name: wp
-    driver_opts:
-      type: none
-      o: bind
-      device: ${HOME}/data/wordpress
-  db:
+  mariadb_data:
     driver: local
-    name: db
-    driver_opts:
-      type: none
-      o: bind
-      device: ${HOME}/data/mariadb
 
 # Define services for MariaDB, WordPress, and Nginx
 services:
   # MariaDB service configuration
   mariadb:
-    container_name: mariadb
-    build: ./requirements/mariadb
+    container_name: mariadb_container
+    build: 
+      context: ./mariadb_files   # Specify build context for MariaDB Dockerfile
     env_file:
-      - .env
+      - .env                      # Load environment variables from .env file
     volumes:
-      - db:/var/lib/mysql        # Mount the MariaDB data volume
+      - mariadb_data:/var/lib/mysql  # Mount MariaDB data volume
     networks:
-      - inception_net            # Connect to the custom bridge network
-    restart: always              # Restart the container always
+      - wp_network                # Connect to custom bridge network
+    restart: always               # Always restart container on failure
 
   # WordPress service configuration
   wordpress:
-    container_name: wordpress
-    build: ./requirements/wordpress
+    container_name: wordpress_container
+    build: 
+      context: ./wordpress_files  # Specify build context for WordPress Dockerfile
     env_file:
-      - .env
-    depends_on:
-      - mariadb                 # Depend on the MariaDB service
+      - .env                      # Load environment variables from .env file
     volumes:
-      - wp:/var/www/html         # Mount the WordPress data volume
+      - wordpress_data:/var/www/html  # Mount WordPress data volume
     networks:
-      - inception_net            # Connect to the custom bridge network
-    restart: always              # Restart the container always
+      - wp_network                # Connect to custom bridge network
+    depends_on:
+      - mariadb                   # Depend on MariaDB service
+    restart: always               # Always restart container on failure
 
   # Nginx service configuration
   nginx:
-    container_name: nginx
-    build: ./requirements/nginx
+    container_name: nginx_container
+    build: 
+      context: ./nginx_files      # Specify build context for Nginx Dockerfile
     ports:
-      - "443:443"                # Expose port 443 for SSL
-    depends_on:
-      - wordpress               # Depend on the WordPress service
+      - "443:443"                 # Expose port 443 for SSL
     volumes:
-      - wp:/var/www/html         # Mount the WordPress data volume
+      - wordpress_data:/var/www/html  # Mount WordPress data volume
     networks:
-      - inception_net            # Connect to the custom bridge network
-    restart: always              # Restart the container always
+      - wp_network                # Connect to custom bridge network
+    depends_on:
+      - wordpress                # Depend on WordPress service
+    restart: always               # Always restart container on failure
