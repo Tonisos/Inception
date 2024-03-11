@@ -23,9 +23,9 @@ if [ ! -f /var/www/html/wp-config.php ]; then
   wp core download --allow-root
 
   # Check if required environment variables are defined
-  if [ -z "$WP_TITLE" ] || [ -z "$WP_USER_LOGIN" ] || [ -z "$WP_USER_PASSWORD" ] || [ -z "$WP_DB_HOST" ]; then
+  if [ -z "$WP_DATABASE_NAME" ] || [ -z "$WP_DB_USER" ] || [ -z "$WP_DB_PASSWORD" ] || [ -z "$WP_DB_HOST" ]; then
     echo "Error: Environment variables not defined."
-    echo "Check that WP_TITLE, WP_USER_LOGIN, WP_USER_PASSWORD, and WP_DB_HOST are correctly defined in the .env file."
+    echo "Check that WP_DATABASE_NAME, WP_DB_USER, WP_DB_PASSWORD, and WP_DB_HOST are correctly defined in the .env file."
     exit 1
   fi
 
@@ -37,9 +37,9 @@ if [ ! -f /var/www/html/wp-config.php ]; then
     # Generate the file wp-config.php with the new secret keys
     cat > /var/www/html/wp-config.php <<EOL
 <?php
-define( 'DB_NAME', '${WP_TITLE}' );
-define( 'DB_USER', '${WP_USER_LOGIN}' );
-define( 'DB_PASSWORD', '${WP_USER_PASSWORD}' );
+define( 'DB_NAME', '${WP_DATABASE_NAME}' );
+define( 'DB_USER', '${WP_DB_USER}' );
+define( 'DB_PASSWORD', '${WP_DB_PASSWORD}' );
 define( 'DB_HOST', '${WP_DB_HOST}' );
 define( 'DB_CHARSET', 'utf8' );
 define( 'DB_COLLATE', '' );
@@ -60,8 +60,8 @@ EOL
 
   # Install WordPress, create the main admin user, and additional user if not already set up
   echo "Wordpress: creating users..."
-  wp core install --allow-root --url=${WP_URL} --title=${WP_TITLE} --admin_user=${WP_ADMIN_LOGIN} --admin_password=${WP_ADMIN_PASSWORD} --admin_email=${WP_ADMIN_EMAIL}
-  wp user create --allow-root ${WP_USER_LOGIN} ${WP_USER_EMAIL} --user_pass=${WP_USER_PASSWORD}
+  wp core install --allow-root --url=${WP_URL} --title=${WP_DATABASE_NAME} --admin_user=${WP_ADMIN_LOGIN} --admin_password=${WP_ADMIN_PASSWORD} --admin_email=${WP_ADMIN_EMAIL}
+  wp user create --allow-root ${WP_DB_USER} ${WP_DB_EMAIL} --user_pass=${WP_DB_PASSWORD}
   echo "Wordpress: set up!"
 fi
 
