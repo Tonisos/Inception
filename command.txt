@@ -1,0 +1,8 @@
+docker exec -it mariadb bash
+
+mysql -uamontalb -p
+
+SHOW DATABASES;
+USE wordpress;
+SHOW TABLES;
+SELECT * FROM <nom table>;

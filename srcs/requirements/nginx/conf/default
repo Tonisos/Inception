@@ -1,46 +1,46 @@
 server {
-    # Listen on port 443 with SSL/TLS
+    # Écoute sur le port 443 avec SSL/TLS
     listen 443 ssl;
     listen [::]:443 ssl;
 
-    # Define the server name
+    # Définit le nom du serveur
     server_name amontalb.42.fr;
 
-    # SSL configuration
+    # Configuration SSL
     ssl_certificate /etc/ssl/certs/nginx.crt;
     ssl_certificate_key /etc/ssl/private/nginx.key;
     ssl_protocols TLSv1.3;
 
-    # Root directory for the server
+    # Répertoire racine pour le serveur
     root /var/www/html;
 
-    # Configuration for the root location
+    # Configuration pour l'emplacement racine
     location / {
-        # Try serving files, then directories, and return a 404 if not found
+        # Tente de servir les fichiers, puis les répertoires, et renvoie une erreur 404 si non trouvé
         try_files $uri $uri/ =404;
 
-        # Define the index files
+        # Définit les fichiers d'index
         index index.php index.html;
 
-        # Enable directory listing
+        # Active la liste de répertoire
         autoindex on;
     }
 
-    # Configuration for PHP files
+    # Configuration pour les fichiers PHP
     location ~ \.php$ {
-        # Try serving PHP files, return a 404 if not found
+        # Tente de servir les fichiers PHP, renvoie une erreur 404 si non trouvé
         try_files $uri $uri/ =404;
 
-        # Include fastcgi_params for FastCGI configuration
+        # Inclut fastcgi_params pour la configuration FastCGI
         include fastcgi_params;
 
-        # Pass PHP requests to the FastCGI server listening on wordpress:9000
+        # Passe les requêtes PHP au serveur FastCGI écoutant sur wordpress:9000
         fastcgi_pass wordpress:9000;
 
-        # Specify the index file for FastCGI
+        # Spécifie le fichier d'index pour FastCGI
         fastcgi_index index.php;
 
-        # Set the script filename and name parameters
+        # Définit le nom du script et les paramètres du nom
         fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
         fastcgi_param SCRIPT_NAME $fastcgi_script_name;
         fastcgi_param PATH_INFO $fastcgi_path_info;

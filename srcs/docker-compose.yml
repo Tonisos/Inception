@@ -1,58 +1,58 @@
 version: '3.7'
 
-# Define a custom bridge network for WordPress containers
+# Définit un réseau bridge personnalisé pour les conteneurs WordPress
 networks:
   wp_network:
     driver: bridge
 
-# Define named volumes for WordPress and MariaDB data persistence
+# Définit des volumes nommés pour la persistance des données de WordPress et MariaDB
 volumes:
   wordpress_data:
     driver: local
   mariadb_data:
     driver: local
 
-# Define services for MariaDB, WordPress, and Nginx
+# Définit les services pour MariaDB, WordPress et Nginx
 services:
-  # MariaDB service configuration
+  # Configuration du service MariaDB
   mariadb:
     container_name: mariadb_container
     build: 
-      context: ./mariadb_files   # Specify build context for MariaDB Dockerfile
+      context: ./requirements/mariadb  # Spécifie le contexte de construction pour le Dockerfile de MariaDB
     env_file:
-      - .env                      # Load environment variables from .env file
+      - .env                      # Charge les variables d'environnement à partir du fichier .env
     volumes:
-      - mariadb_data:/var/lib/mysql  # Mount MariaDB data volume
+      - mariadb_data:/var/lib/mysql  # Montage du volume de données MariaDB
     networks:
-      - wp_network                # Connect to custom bridge network
-    restart: always               # Always restart container on failure
+      - wp_network                # Connecte au réseau bridge personnalisé
+    restart: always               # Redémarrage du conteneur en cas d'échec
 
-  # WordPress service configuration
+  # Configuration du service WordPress
   wordpress:
     container_name: wordpress_container
     build: 
-      context: ./wordpress_files  # Specify build context for WordPress Dockerfile
+      context: ./requirements/wordpress  # Spécifie le contexte de construction pour le Dockerfile de WordPress
     env_file:
-      - .env                      # Load environment variables from .env file
+      - .env                      # Charge les variables d'environnement à partir du fichier .env
     volumes:
-      - wordpress_data:/var/www/html  # Mount WordPress data volume
+      - wordpress_data:/var/www/html  # Montage du volume de données WordPress
     networks:
-      - wp_network                # Connect to custom bridge network
+      - wp_network                # Connecte au réseau bridge personnalisé
     depends_on:
-      - mariadb                   # Depend on MariaDB service
-    restart: always               # Always restart container on failure
+      - mariadb                   # Dépend du service MariaDB
+    restart: always               # Redémarrage du conteneur en cas d'échec
 
-  # Nginx service configuration
+  # Configuration du service Nginx
   nginx:
     container_name: nginx_container
     build: 
-      context: ./nginx_files      # Specify build context for Nginx Dockerfile
+      context: ./requirements/nginx     # Spécifie le contexte de construction pour le Dockerfile de Nginx
     ports:
-      - "443:443"                 # Expose port 443 for SSL
+      - "443:443"                 # Expose le port 443 pour SSL
     volumes:
-      - wordpress_data:/var/www/html  # Mount WordPress data volume
+      - wordpress_data:/var/www/html  # Montage du volume de données WordPress
     networks:
-      - wp_network                # Connect to custom bridge network
+      - wp_network                # Connecte au réseau bridge personnalisé
     depends_on:
-      - wordpress                # Depend on WordPress service
-    restart: always               # Always restart container on failure
+      - wordpress                # Dépend du service WordPress
+    restart: always               # Redémarrage du conteneur en cas d'échec
